@@ -2,3 +2,7 @@ Flask
 Flask-Session
 psycopg2
 SQLAlchemy
+SQLAlchemy.orm
+werkzeug.security
+functools
+requests
