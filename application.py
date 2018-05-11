@@ -22,10 +22,37 @@ app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 
+#DATABASE_URL = postgres://epzqwkivmgzdoz:f9fa4895d9117458edb0253623c4c1491c431587d3f822288fa1b73d485e93f2@ec2-79-125-110-209.eu-west-1.compute.amazonaws.com:5432/df0jghboock9u9
+
 # Set up database
 engine = create_engine(os.getenv("DATABASE_URL"))
 db = scoped_session(sessionmaker(bind=engine))
 
+""" 
+db.execute("CREATE DATABASE kutub")
+
+db.execute("CREATE TABLE users \
+             (id SERIAL PRIMARY KEY, \
+              username VARCHAR UNIQUE NOT NULL, \
+              password VARCHAR NOT NULL)")
+  
+db.execute("CREATE TABLE books \
+              (ISBN VARCHAR PRIMARY KEY, \
+               title VARCHAR NOT NULL, \
+               author VARCHAR NOT NULL, \
+               year INTEGER NOT NULL)")
+  
+db.execute("CREATE TABLE reviews \
+              (id SERIAL PRIMARY KEY, \
+               book_id VARCHAR REFERENCES books, \
+               rating INTEGER NOT NULL, \
+               opinion VARCHAR NOT NULL)")
+  
+db.execute("CREATE TABLE reviewers \
+              (review_id INTEGER REFERENCES reviews, \
+               user_id INTEGER REFERENCES users)")
+  
+db.execute("CREATE INDEX title_id ON books(title)") """
 
 def login_required(f):
     """ Decorate routes to require login. """
@@ -168,7 +195,7 @@ def kutub_api(isbn):
     "year": book.year,
     "isbn": isbn,
     "review_count": int(book.count),
-    "average_score": "{0:.1f}".format(book.count)
+    "average_score": "{0:.1f}".format(book.avg)
     #f'{book.avg:.1f}'
   })
   
