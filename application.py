@@ -64,7 +64,7 @@ def login_required(f):
     return decorated_function
   
 
-@app.route("/", methods=["GET", "POST"])
+@app.route("/")
 def index():
   return render_template("index.html")
   
