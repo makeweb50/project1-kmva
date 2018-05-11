@@ -1,0 +1,30 @@
+{% extends "layout.html" %}
+  
+{% block title %}
+    SIGN UP
+{% endblock %}
+  
+  {% block menu %}
+      <li> <a href="{{ url_for('signin') }}">Sign In</a></li>
+      
+      <li> <a href="{{ url_for('signup') }}">Sign Up</a></li>
+  {% endblock %}     
+    
+  
+{% block main %}
+    
+     <main class="forms"> 
+       <div class="container">
+          <div id="signup" class="modal">
+            <form action="{{ url_for('signup') }}" method="post">
+              <input  name="username" placeholder="Username" type="text" autofocus>
+              <input name="password" placeholder="Password"  type="password">
+              <input name="confirm" placeholder="Confirm" type="password">
+              <button type="submit">Sign Up</button>
+            </form>
+          </div>
+       </div>
+    </main>
+      
+{% endblock %}     
+     
