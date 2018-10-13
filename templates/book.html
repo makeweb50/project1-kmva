@@ -5,7 +5,8 @@
 {% endblock %}
 
   {% block menu %}
-    <li> <a href="{{ url_for('logout') }}" class="logout">Logout</a></li>
+   	<li> <a href="{{ url_for('search') }}" class="button_hover">Search</a></li>
+    <li> <a href="{{ url_for('logout') }}" class="logout button_hover">Logout</a></li>
   {% endblock %}
  
    
@@ -19,10 +20,10 @@
             <img src="../static/img/mockup.jpg" alt="">
           </div>
           <div class="desc">
-            <p><em>Title:</em> {{ result.title }}</p>
-            <p class="author"><em>Author:</em> {{ result.author }}</p>
-            <p class="year"><em>Year:</em> {{ result.year }}</p>
-            <p class="isbn"><em>ISBN:</em> {{ result.isbn }}</p>
+            <p class="title"><b> {{ result.title }}</b></p>
+            <p class="author"><span class="name">Author:</span> {{ result.author }}</p>
+            <p class="year"><span class="name">Year:</span> {{ result.year }}</p>
+            <p class="isbn"><span class="name">ISBN:</span> {{ result.isbn }}</p>
           </div>
         </div>   
             <div class="reviews">
@@ -36,19 +37,19 @@
                 {{ goodreads.books[0].average_rating }}</p>
               </div>
               
-              
-              <div class="kutub">
-                <h2>Reviews from Kutub</h2>
-                <ol class="reviews">
-                {% for review in reviews %}
-                  <li>"
-                    {{ review.opinion }}" 
-                  </li>
-                {% endfor %}
-                </ol>
-                {{ kutub_raiting }}
-              </div>
-
+              {% if reviews%}
+									<div class="kutub">
+										<h2>Reviews from Kutub</h2>
+										<ol class="reviews">
+										{% for review in reviews %}
+											<li>"
+												{{ review.opinion }}"
+											</li>
+										{% endfor %}
+										</ol>
+										{{ kutub_raiting }}
+									</div>
+							{% endif %}
             </div>
             
           <div class="review">
@@ -62,7 +63,7 @@
                 <option value="4">4</option>
                 <option value="5" selected>5</option>
               </select>
-              <button type="submit">Send feedback</button>
+              <button type="submit" class="feedback">Send feedback</button>
             </form>
           </div>
         

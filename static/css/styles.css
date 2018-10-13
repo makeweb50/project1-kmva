@@ -99,11 +99,12 @@ h1{
 }
 
 .sign_menu {
-  width: 150px;
+  max-width: 160px;
+	min-width: 70px;
   text-align: right;
 }
 
-.sign_menu a, .logout{
+.sign_menu a, .button_hover{
   display: block;
   background: #66023c;
   border: 1px solid white;
@@ -118,6 +119,7 @@ h1{
 
 .sign_menu li{
   display: inline-block;
+	margin-left: 5px;
 }
 
 /*** pages ***/
@@ -126,10 +128,11 @@ header a{
   color: #66023c;
 }
 
-a:hover, .logout:hover{
+.button_hover:hover{
   background: #FFF;
   color:#66023c;
   border: 1px solid #66023c;
+	border-radius: 5px;
 }
 
 .icon{
@@ -181,7 +184,7 @@ input, button{
   border: 1px solid #66023c;
   color: #66023c;
   width: 100%;
-  padding: 5%;
+  padding: 4%;
   text-align: left;
   font-size: 1.8rem;
   margin-bottom: 20px;
@@ -195,6 +198,14 @@ button{
   font-weight: bold;
   opacity: 1;
   cursor: pointer;
+  width: 30%;
+	margin: 50px auto;
+	height: 50%;
+	padding: 3%;
+}
+
+.feedback{
+	width: 40%;		
 }
 
 select{
@@ -214,6 +225,7 @@ select{
   font-size: 1.6rem;
   overflow-y: scroll;
   overflow-x: auto;
+	box-shadow: inset 0px 0px 17px -1px rgba(0,0,0,0.75);
 }
 
 #back ul li{
@@ -266,6 +278,40 @@ select{
   margin-top: 30px;
 }
 
+::-webkit-input-placeholder{
+		font-style: italic;
+}
+
+
+::-moz-placeholder{
+		font-style: italic;
+}
+
+:-moz-placeholder{
+		font-style: italic;
+}
+
+:-ms-input-placeholder{
+		font-style: italic;
+}
+
+:focus::-webkit-input-placeholder{
+		color: transparent
+}
+
+:focus::-moz-placeholder{
+		color: transparent
+}
+
+:focus:-moz-placeholder{
+		color: transparent
+}
+
+:focus:-ms-input-placeholder{
+		color: transparent
+}
+
+
 .review p{
   display: inline-block;
   margin-right: 20px;
@@ -281,8 +327,8 @@ select{
 }
 
 #book .img{
- width: 50%; 
-  margin: 0 30px 60px;
+  width: 50%; 
+  margin: 0 30px 40px;
 }
 
 #book img{
@@ -291,12 +337,18 @@ select{
 }
 
 #book .info{
-  font-size: 2rem ;
+  font-size: 1.6rem ;
   text-align: left;
 }
 
-#book .info p em{
-  color:   #66023c;
+#book .info p .name{
+  color:  #66023c;
+}
+
+#book .info .title b{
+	display: inline-block;
+	font-size: 2.5rem;
+	margin-bottom: 10px;
 }
 
 /*** error pagge ***/

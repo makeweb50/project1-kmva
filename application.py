@@ -1,5 +1,3 @@
-#!/usr/bin/python3
-
 import os
 
 from flask import Flask, session, render_template, url_for, request, flash, redirect, jsonify
@@ -22,10 +20,40 @@ app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 
+#DATABASE_URL = postgres://epzqwkivmgzdoz:f9fa4895d9117458edb0253623c4c1491c431587d3f822288fa1b73d485e93f2@ec2-79-125-110-209.eu-west-1.compute.amazonaws.com:5432/df0jghboock9u9
+
+
 # Set up database
 engine = create_engine(os.getenv("DATABASE_URL"))
 db = scoped_session(sessionmaker(bind=engine))
 
+
+""" 
+db.execute("CREATE DATABASE kutub")
+
+db.execute("CREATE TABLE users \
+             (id SERIAL PRIMARY KEY, \
+              username VARCHAR UNIQUE NOT NULL, \
+              password VARCHAR NOT NULL)")
+  
+db.execute("CREATE TABLE books \
+              (ISBN VARCHAR PRIMARY KEY, \
+               title VARCHAR NOT NULL, \
+               author VARCHAR NOT NULL, \
+               year INTEGER NOT NULL)")
+  
+db.execute("CREATE TABLE reviews \
+              (id SERIAL PRIMARY KEY, \
+               book_id VARCHAR REFERENCES books ON DELETE CASCADE, \
+               rating INTEGER NOT NULL, \
+               opinion VARCHAR NOT NULL)")
+  
+db.execute("CREATE TABLE reviewers \
+              (review_id INTEGER REFERENCES reviews ON DELETE CASCADE, \
+               user_id INTEGER REFERENCES users ON DELETE CASCADE)")
+  
+db.execute("CREATE INDEX title_id ON books(title)") """
+    
 
 def login_required(f):
     """ Decorate routes to require login. """
@@ -55,7 +83,7 @@ def signin():
     checking = db.execute("SELECT * FROM users WHERE username = :username", {"username":request.form.get("username")}).fetchone()
     if checking == None or not check_password_hash(str(checking["password"]), request.form.get("password")):
       return render_template("error.html", message="Invalid username and/or password")
-    
+   
     session["user_id"] = checking["id"]
     
     return render_template("search.html")
@@ -119,6 +147,7 @@ def search():
   else:
       return render_template("search.html")
 
+		
 @app.route("/book/<isbn>")
 @login_required
 def book(isbn):
@@ -128,23 +157,19 @@ def book(isbn):
   if db.execute("SELECT * FROM books WHERE isbn=:isbn",{"isbn":isbn}).rowcount == 0:
     return render_template("error.html", message="Query reports no results")
 
-  reviews = db.execute("SELECT avg(rating) AS avg, opinion FROM reviews WHERE book_id=:book_id GROUP BY opinion",{"book_id":isbn}).fetchall()
+  reviews = db.execute("SELECT id, avg(rating) AS avg, opinion FROM reviews WHERE book_id=:book_id GROUP BY id",{"book_id":isbn}).fetchall()
 
   goodreads = requests.get("https://www.goodreads.com/book/review_counts.json", params={"key": "7OFw9iX4NiYcQRjI8uGCQ", "isbns": isbn}).json()
-  
-  print(reviews)
-
   return render_template("book.html", result=result, reviews=reviews, goodreads=goodreads)
   
+	
 @app.route("/review/<isbn>", methods=["POST"])
 @login_required
 def review(isbn):  
   if request.method == "POST":
-    opinion = request.form.get("review")
+    opinion = request.form.get("review").split()
     rating = int(request.form.get("rating"))
-    
-    exist =  db.execute("SELECT * FROM reviewers WHERE review_id in(SELECT id FROM reviews WHERE book_id=:isbn) AND user_id=:user_id", {"isbn": isbn, "user_id": session["user_id"]}).fetchone()
-   
+    exist =  db.execute("SELECT * FROM reviewers WHERE review_id in(SELECT id FROM reviews WHERE book_id=:isbn) AND user_id=:user_id", {"isbn": isbn, "user_id": session["user_id"]}).fetchone()  
     
     if exist:
       return render_template("error.html", message="You have already left a review for this book. You can not leave more than one review per book.")
@@ -154,11 +179,18 @@ def review(isbn):
     db.execute("INSERT INTO reviewers (review_id, user_id) VALUES(:review_id, :user_id)", {"review_id": review_id, "user_id": session["user_id"]})
     
     db.commit()
-    
+		
+  result = db.execute("SELECT * FROM books WHERE isbn=:isbn",{"isbn":isbn}).fetchone()
+
+  reviews = db.execute("SELECT avg(rating) AS avg, opinion FROM reviews WHERE book_id=:book_id GROUP BY opinion",{"book_id":isbn}).fetchall()
+  goodreads = requests.get("https://www.goodreads.com/book/review_counts.json", params={"key": "7OFw9iX4NiYcQRjI8uGCQ", "isbns": isbn}).json()
+  
+  return render_template("book.html", result=result, reviews=reviews, goodreads=goodreads)
+ 
+
 @app.route("/api/<isbn>")
 def kutub_api(isbn):      
   book = db.execute("SELECT title, author, year, count(opinion) AS count, avg(rating) AS avg FROM books JOIN reviews ON books.ISBN=reviews.book_id WHERE ISBN=:isbn GROUP BY isbn", {"isbn":isbn}).fetchone()
-  print(book)
   if book == None:
     return jsonify({"error": "Invalid ISBN"}), 404
   
@@ -168,7 +200,7 @@ def kutub_api(isbn):
     "year": book.year,
     "isbn": isbn,
     "review_count": int(book.count),
-    "average_score": "{0:.1f}".format(book.count)
+    "average_score": "{0:.1f}".format(book.avg)
     #f'{book.avg:.1f}'
   })
   
