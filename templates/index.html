@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+  
+{% block title %}
+    KUTUB
+{% endblock %}
+  
+{% block header%}   
+    
+     <header id="index">
+      <div class="container">
+        <div class="sign flex between">
+          <a href="{{ url_for('signin') }}" id="signin" class="sign_in" >Sign In</a>
+          <a href="{{ url_for('signup') }}" id="signup" class="sign_up">Sign Up</a>
+        </div>
+
+        <div class="welcome">
+          <h1>Kutub</h1>
+          <p class="tagline">Find your book</p>
+        </div>
+      </div>
+     </header>
+     
+{% endblock %} 

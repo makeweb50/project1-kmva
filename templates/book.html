@@ -1,0 +1,76 @@
+{% extends "layout.html" %}
+  
+{% block title %}
+    BOOK
+{% endblock %}
+
+  {% block menu %}
+   	<li> <a href="{{ url_for('search') }}" class="button_hover">Search</a></li>
+    <li> <a href="{{ url_for('logout') }}" class="logout button_hover">Logout</a></li>
+  {% endblock %}
+ 
+   
+    {% block main %}
+    
+    <main id="book"  class="center">
+      <div id="back">
+       
+        <div class="info flex">
+          <div class="img">
+            <img src="../static/img/mockup.jpg" alt="">
+          </div>
+          <div class="desc">
+            <p class="title"><b> {{ result.title }}</b></p>
+            <p class="author"><span class="name">Author:</span> {{ result.author }}</p>
+            <p class="year"><span class="name">Year:</span> {{ result.year }}</p>
+            <p class="isbn"><span class="name">ISBN:</span> {{ result.isbn }}</p>
+          </div>
+        </div>   
+            <div class="reviews">
+            
+            
+              <div class="goodreads">
+                <h2>Raiting from Goodreads</h2>
+                <p>Ratings count: {{ goodreads.books[0].ratings_count }}</p>
+
+                <p>Average rating: 
+                {{ goodreads.books[0].average_rating }}</p>
+              </div>
+              
+              {% if reviews%}
+									<div class="kutub">
+										<h2>Reviews from Kutub</h2>
+										<ol class="reviews">
+										{% for review in reviews %}
+											<li>"
+												{{ review.opinion }}"
+											</li>
+										{% endfor %}
+										</ol>
+										{{ kutub_raiting }}
+									</div>
+							{% endif %}
+            </div>
+            
+          <div class="review">
+            <form action="{{ url_for('review', isbn=result.isbn) }}" method="post">
+              <textarea name="review" id="review_text" placeholder="Write here your opinion" rows="8"></textarea>
+              <p>Rate this book</p>
+              <select name="rating" id="rating">
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5" selected>5</option>
+              </select>
+              <button type="submit" class="feedback">Send feedback</button>
+            </form>
+          </div>
+        
+        
+        </div>
+    </main>
+   
+  {% endblock %}
+   
+     
